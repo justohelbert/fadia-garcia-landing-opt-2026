@@ -5,24 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Diamond Funding Accelerator</title>
     <script>
-      // Workaround for "Cannot set property fetch of #<Window> which has only a getter"
-      // This must run before any other scripts.
+      // Aggressive workaround for "Cannot set property fetch of #<Window> which has only a getter"
       (function() {
         try {
-          var descriptor = Object.getOwnPropertyDescriptor(window, 'fetch');
-          if (descriptor && !descriptor.set && (descriptor.get || !descriptor.writable)) {
-            var originalFetch = window.fetch;
-            var currentFetch = originalFetch;
+          var target = window;
+          var prop = 'fetch';
+          var originalFetch = target[prop];
+          var currentFetch = originalFetch;
+          
+          Object.defineProperty(target, prop, {
+            get: function() { return currentFetch; },
+            set: function(v) { currentFetch = v; },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) {
+          // If the above fails, it's likely non-configurable.
+          // We try one more time without configurable: true just in case.
+          try {
             Object.defineProperty(window, 'fetch', {
               get: function() { return currentFetch; },
               set: function(v) { currentFetch = v; },
-              configurable: true,
               enumerable: true
             });
-          }
-        } catch (e) {}
+          } catch (e2) {}
+        }
       })();
     </script>
+    <script src="https://app.diamondbizconsulting.com/js/form_embed.js"></script>
   </head>
   <body>
     <div id="root"></div>

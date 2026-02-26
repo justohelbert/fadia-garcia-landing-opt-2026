@@ -7,7 +7,7 @@ import {
   Youtube,
   Volume2
 } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, ReactNode } from "react";
 
 const StarField = () => {
   const stars = useMemo(() => {
@@ -126,41 +126,115 @@ const BorderStars = () => {
   );
 };
 
-const TestimonialCard = ({ name, description, videoId }: { name: string, description: string, videoId: string }) => {
+const TestimonialCard = ({ videoUrl, objectFit = "object-cover" }: { videoUrl?: string, objectFit?: "object-cover" | "object-contain" }) => {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="relative group p-[2px] rounded-[42px] bg-quickbooks-green overflow-hidden shadow-xl"
+      className="relative group rounded-[42px] border-2 border-quickbooks-green bg-white overflow-hidden shadow-xl h-full flex flex-col"
     >
       <BorderStars />
-      <div className="bg-white rounded-[40px] overflow-hidden p-4 relative z-20">
-        <div className="aspect-[9/16] bg-black rounded-[32px] overflow-hidden mb-6 relative">
-          <div className="absolute inset-0 flex items-center justify-center text-white/20 text-[10px] text-center p-8 z-10">
-            [Código Embebido: {videoId}]
-          </div>
-          <img 
-            src={`https://picsum.photos/seed/${videoId}/400/711`} 
-            className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
-            alt={name}
-          />
-          <div className="absolute bottom-6 left-6 right-6 z-20">
-             <div className="bg-cyan-400/90 backdrop-blur text-navy-blue px-4 py-2 rounded-full text-[10px] font-bold inline-flex items-center gap-2 shadow-lg">
-               <Volume2 className="w-3 h-3" /> Toca para escuchar
-             </div>
-          </div>
-        </div>
-        <div className="px-2 pb-2">
-          <h4 className="font-bold text-lg text-black mb-1">{name}</h4>
-          <p className="text-[11px] text-gray-500 leading-relaxed italic">
-            {description}
-          </p>
+      <div className="p-4 relative z-20 flex flex-col h-full">
+        <div className="aspect-[9/16] bg-black rounded-[32px] overflow-hidden relative shrink-0">
+          {videoUrl ? (
+            <video 
+              controls 
+              playsInline 
+              className={`w-full h-full ${objectFit}`}
+            >
+              <source src={videoUrl} type="video/mp4" />
+            </video>
+          ) : (
+            <>
+              <div className="absolute inset-0 flex items-center justify-center text-white/20 text-[10px] text-center p-8 z-10">
+                [Video Placeholder]
+              </div>
+              <img 
+                src={`https://picsum.photos/seed/testimonial/400/711`} 
+                className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
+                alt="Testimonial"
+              />
+            </>
+          )}
+          {!videoUrl && (
+            <div className="absolute bottom-6 left-6 right-6 z-20">
+               <div className="bg-cyan-400/90 backdrop-blur text-navy-blue px-4 py-2 rounded-full text-[10px] font-bold inline-flex items-center gap-2 shadow-lg">
+                 <Volume2 className="w-3 h-3" /> Toca para escuchar
+               </div>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
   );
 };
+
+const Logo = ({ className = "", iconOnly = false }: { className?: string, iconOnly?: boolean }) => (
+  <div className={`flex items-center gap-3 ${className}`}>
+    <svg 
+      viewBox="0 0 100 80" 
+      className="h-10 w-auto shrink-0" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Diamond Icon - Improved paths for better visibility */}
+      <path 
+        d="M50 75L15 35H85L50 75Z" 
+        stroke="#001F3F" 
+        strokeWidth="4" 
+        strokeLinejoin="round"
+      />
+      <path 
+        d="M15 35L30 5H70L85 35H15Z" 
+        stroke="#001F3F" 
+        strokeWidth="4" 
+        strokeLinejoin="round"
+      />
+      <path 
+        d="M30 5L50 35L70 5" 
+        stroke="#001F3F" 
+        strokeWidth="2.5" 
+        strokeLinejoin="round"
+      />
+      <path 
+        d="M15 35L85 35" 
+        stroke="#001F3F" 
+        strokeWidth="2.5" 
+        strokeLinejoin="round"
+      />
+      <path 
+        d="M30 35L50 75L70 35" 
+        stroke="#001F3F" 
+        strokeWidth="2.5" 
+        strokeLinejoin="round"
+      />
+    </svg>
+    {!iconOnly && (
+      <div className="flex flex-col justify-center leading-[0.9]">
+        <span className="text-[#001F3F] font-black text-xl md:text-2xl tracking-tighter uppercase">Diamond</span>
+        <div className="flex gap-1 text-[10px] md:text-xs font-bold uppercase tracking-wider mt-0.5">
+          <span className="text-[#001F3F]">Biz</span>
+          <span className="text-[#2CA01C]">Funding</span>
+        </div>
+      </div>
+    )}
+  </div>
+);
+
+const ActionButton = ({ href, children, subtitle, className = "" }: { href: string, children: ReactNode, subtitle?: string, className?: string }) => (
+  <a 
+    href={href} 
+    className={`bg-navy-blue text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl font-bold hover:bg-opacity-90 transition-all hover:scale-105 shadow-[0_20px_40px_-10px_rgba(0,31,63,0.4)] flex flex-col items-center text-center group ${className}`}
+  >
+    <span className="text-lg md:text-xl">{children}</span>
+    {subtitle && (
+      <span className="text-[10px] md:text-[11px] opacity-70 font-normal mt-1 group-hover:opacity-100 transition-opacity">
+        {subtitle}
+      </span>
+    )}
+  </a>
+);
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -176,20 +250,18 @@ const Navbar = () => {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "py-4 bg-white/80 backdrop-blur-md border-b border-navy-blue/10 shadow-sm" : "py-8"}`}>
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-quickbooks-green rounded-lg flex items-center justify-center">
-            <div className="w-4 h-4 bg-white rounded-sm" />
-          </div>
-          <span className="font-bold text-xl tracking-tight text-navy-blue">DIAMOND FUNDING</span>
-        </div>
+        <Logo className="h-10 md:h-12" />
         
         <div className="hidden md:flex items-center gap-8">
           <a href="#metodo" className="text-sm font-medium text-navy-blue opacity-70 hover:opacity-100 transition-opacity">El Método</a>
           <a href="#resultados" className="text-sm font-medium text-navy-blue opacity-70 hover:opacity-100 transition-opacity">Resultados</a>
           <a href="#oferta" className="text-sm font-medium text-navy-blue opacity-70 hover:opacity-100 transition-opacity">La Oferta</a>
-          <a href="#formulario" className="bg-navy-blue text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-opacity-90 transition-all hover:scale-105">
+          <ActionButton 
+            href="#formulario"
+            className="px-6 py-2.5 rounded-full !text-sm !shadow-none"
+          >
             Aplicar Ahora
-          </a>
+          </ActionButton>
         </div>
       </div>
     </nav>
@@ -236,25 +308,25 @@ const Hero = () => {
           El sistema de ingeniería de capital que utilizan los empresarios de élite para escalar su operación usando el dinero del banco, no sus ahorros.
         </motion.p>
 
-        {/* Video Placeholder */}
+        {/* VSL Image Placeholder */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="w-full max-w-4xl aspect-video bg-gray-100 rounded-[40px] border-8 border-white shadow-[0_20px_80px_-20px_rgba(0,31,63,0.3)] overflow-hidden mb-24 relative group"
         >
-          <div className="absolute inset-0 flex items-center justify-center bg-navy-blue/5 z-10">
-            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform cursor-pointer">
-              <div className="w-0 h-0 border-t-[14px] border-t-transparent border-l-[24px] border-l-navy-blue border-b-[14px] border-b-transparent ml-2" />
+          <img 
+            src="https://assets.cdn.filesafe.space/i5hxiE3CXl2ec8tvUdWp/media/69a0c9189a0c184e611b7ed2.png" 
+            alt="Diamond Funding Accelerator VSL" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 flex items-center justify-center bg-navy-blue/10 z-10 group-hover:bg-navy-blue/20 transition-colors">
+            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform cursor-pointer">
+              <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-navy-blue border-b-[12px] border-b-transparent ml-2" />
             </div>
           </div>
-          <img 
-            src="https://picsum.photos/seed/funding/1200/675" 
-            alt="Video Thumbnail" 
-            className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
-          />
           <div className="absolute top-8 right-8 bg-black/60 backdrop-blur-md text-white px-6 py-3 rounded-full text-sm font-bold z-20">
-            Descubre el Método 500K
+            Próximamente: Video VSL
           </div>
         </motion.div>
 
@@ -262,11 +334,14 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex flex-col items-center gap-10 mb-24"
+          className="flex flex-col items-center gap-10 mb-24 w-full"
         >
-          <a href="#formulario" className="bg-navy-blue text-white px-12 py-5 rounded-2xl text-xl font-bold hover:bg-opacity-90 transition-all hover:scale-105 shadow-[0_20px_40px_-10px_rgba(0,31,63,0.4)]">
+          <ActionButton 
+            href="#formulario"
+            subtitle="Trato humano y personalizado, no eres un número más"
+          >
             APLICAR A LA LISTA DE ESPERA 💎
-          </a>
+          </ActionButton>
           
           <div className="flex flex-col items-center gap-4">
             <div className="flex -space-x-4">
@@ -284,24 +359,45 @@ const Hero = () => {
         </motion.div>
 
         {/* Testimonials Section Below Button */}
-        <div className="w-full max-w-6xl mb-24">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="w-full max-w-5xl mb-24 flex flex-col items-center">
+          <motion.h3 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="text-quickbooks-green font-serif italic text-3xl md:text-4xl text-center mb-12"
+          >
+            Testimonios
+          </motion.h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-sm mx-auto md:max-w-none w-full">
             <TestimonialCard 
-              name="Jean Carlo Rojas" 
-              videoId="testimonial1"
-              description="A través de nuestro método Impulso Empresarial 10X, Jean Carlo obtuvo $102.000 de capital de negocio al 0% de interés por 1 año."
+              videoUrl="https://assets.cdn.filesafe.space/i5hxiE3CXl2ec8tvUdWp/media/68d469c0b9f777addac9184.mp4"
+              objectFit="object-contain"
             />
             <TestimonialCard 
-              name="Maria Rodriguez" 
-              videoId="testimonial2"
-              description="Logró levantar $75,000 para su empresa de logística en tiempo récord, permitiéndole duplicar su flota sin deudas."
+              videoUrl="https://assets.cdn.filesafe.space/i5hxiE3CXl2ec8tvUdWp/media/6903f00679f86120193def76.mp4"
+              objectFit="object-contain"
             />
             <TestimonialCard 
-              name="Carlos Mendoza" 
-              videoId="testimonial3"
-              description="De ser rechazado por bancos tradicionales a obtener $120,000 al 0% mediante nuestra estructura de bajo riesgo."
+              videoUrl="https://assets.cdn.filesafe.space/i5hxiE3CXl2ec8tvUdWp/media/68d469c02c411b7040c110cf.mp4"
+            />
+            <TestimonialCard 
+              videoUrl="https://assets.cdn.filesafe.space/i5hxiE3CXl2ec8tvUdWp/media/68d468e1b9f777fc84ac7528.mp4"
             />
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="mt-12"
+          >
+            <a 
+              href="https://dbettercredit.com/testimonios" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-block border-2 border-navy-blue text-navy-blue px-8 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-navy-blue hover:text-white transition-all duration-300"
+            >
+              Ver Más Testimonios
+            </a>
+          </motion.div>
         </div>
         
         <motion.p
@@ -346,11 +442,11 @@ const ProblemSection = () => {
 
 const MentorSection = () => {
   return (
-    <section id="resultados" className="py-32 bg-white relative z-20 overflow-hidden">
+    <section id="resultados" className="py-24 md:py-32 bg-white relative z-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
-          <div className="relative">
-            <div className="aspect-[4/5] bg-gray-100 rounded-[40px] overflow-hidden border-8 border-white shadow-2xl relative">
+        <div className="grid lg:grid-cols-2 gap-12 md:gap-20 items-center">
+          <div className="relative order-2 lg:order-1">
+            <div className="aspect-[4/5] bg-gray-100 rounded-[32px] md:rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl relative max-w-md mx-auto lg:max-w-none">
               <img 
                 src="https://picsum.photos/seed/fadia/800/1000" 
                 alt="Fadia Garcia" 
@@ -360,24 +456,24 @@ const MentorSection = () => {
               <motion.div 
                 initial={{ x: 20, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
-                className="absolute -right-8 top-1/4 bg-white p-6 rounded-3xl shadow-2xl border border-gray-100 max-w-[200px]"
+                className="absolute -right-4 md:-right-8 top-1/4 bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-2xl border border-gray-100 max-w-[140px] md:max-w-[200px]"
               >
-                <div className="text-3xl font-bold text-quickbooks-green mb-1">$500K+</div>
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Capital Levantado Personalmente</div>
+                <div className="text-xl md:text-3xl font-bold text-quickbooks-green mb-1">$500K+</div>
+                <div className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider leading-tight">Capital Levantado Personalmente</div>
               </motion.div>
             </div>
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-quickbooks-green/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-quickbooks-green/10 rounded-full blur-3xl opacity-50" />
           </div>
 
-          <div>
-            <div className="inline-block bg-navy-blue/5 text-navy-blue font-bold px-4 py-1 rounded-full text-xs mb-8">
+          <div className="order-1 lg:order-2">
+            <div className="inline-block bg-navy-blue/5 text-navy-blue font-bold px-4 py-1 rounded-full text-xs mb-6 md:mb-8">
               CONOCE A TU MENTORA
             </div>
-            <h2 className="text-4xl md:text-6xl font-bold mb-10 text-black leading-tight">
+            <h2 className="text-3xl md:text-6xl font-bold mb-6 md:mb-10 text-black leading-tight">
               De la Bancarrota a <br />
               <span className="text-quickbooks-green">$500,000 en Capital Levantado.</span>
             </h2>
-            <div className="space-y-6 text-lg text-gray-600 leading-relaxed mb-10">
+            <div className="space-y-4 md:space-y-6 text-base md:text-lg text-gray-600 leading-relaxed mb-8 md:mb-10">
               <p>
                 "En 2018 perdí mi empresa de 6 camiones y mi casa. Me quedé con un score de 588. Sentía que el sistema financiero me había cerrado las puertas para siempre."
               </p>
@@ -472,9 +568,13 @@ const OfferSection = () => {
                 </li>
               ))}
             </ul>
-            <a href="#formulario" className="inline-block bg-navy-blue text-white px-10 py-5 rounded-2xl text-xl font-bold hover:bg-opacity-90 transition-all hover:scale-105 shadow-xl shadow-navy-blue/20">
+            <ActionButton 
+              href="#formulario"
+              subtitle="Cupos limitados para garantizar atención 1-a-1"
+              className="!items-start !text-left"
+            >
               QUIERO INGRESAR AHORA 💎
-            </a>
+            </ActionButton>
           </div>
           <div className="relative">
             <div className="aspect-square bg-gray-50 rounded-[40px] border border-gray-100 p-12 flex flex-col justify-center">
@@ -517,7 +617,7 @@ const WarrantySection = () => {
           </p>
           <div className="flex flex-col items-center">
             <div className="font-bold text-2xl text-black">— FADIA GARCIA</div>
-            <div className="text-quickbooks-green font-bold tracking-widest text-xs mt-2">DIAMOND FUNDING</div>
+            <Logo className="h-8 mt-4 opacity-80" />
           </div>
         </div>
       </div>
@@ -546,100 +646,14 @@ const FormSection = () => {
             </p>
           </div>
 
-          <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-2xl">
-            <h3 className="text-2xl font-bold mb-10 text-black text-center">Solicita Tu Consulta Gratis</h3>
-            
-            <form className="space-y-6">
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Nombre Completo</label>
-                <input type="text" className="w-full bg-gray-50 border border-gray-100 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-quickbooks-green transition-all" placeholder="Tu nombre..." />
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Email</label>
-                  <input type="email" className="w-full bg-gray-50 border border-gray-100 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-quickbooks-green transition-all" placeholder="tu@email.com" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Teléfono</label>
-                  <input type="tel" className="w-full bg-gray-50 border border-gray-100 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-quickbooks-green transition-all" placeholder="+1..." />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">¿Tienes LLC o Corp activa?</label>
-                <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-quickbooks-green transition-all appearance-none">
-                  <option>Sí</option>
-                  <option>No</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">¿Cuál es tu industria?</label>
-                <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-quickbooks-green transition-all appearance-none">
-                  <option>Trucking</option>
-                  <option>Construcción</option>
-                  <option>Real Estate</option>
-                  <option>Servicios</option>
-                  <option>Landscaping</option>
-                  <option>Food</option>
-                  <option>Limpieza</option>
-                  <option>Otro</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">¿Facturación mensual promedio?</label>
-                <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-quickbooks-green transition-all appearance-none">
-                  <option>$0-$10K</option>
-                  <option>$10K-$30K</option>
-                  <option>$30K-$50K</option>
-                  <option>+$50K</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">¿Puntaje de crédito estimado?</label>
-                <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-quickbooks-green transition-all appearance-none">
-                  <option>&lt;600</option>
-                  <option>600-700</option>
-                  <option>700+</option>
-                  <option>No lo sé</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">¿Cuánto capital al 0% buscas en 120 días?</label>
-                <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-quickbooks-green transition-all appearance-none">
-                  <option>$25K</option>
-                  <option>$50K</option>
-                  <option>+$100K</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">¿Cuentas con al menos $5,000 de saldo disponible?</label>
-                <select className="w-full bg-gray-50 border border-gray-100 rounded-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-quickbooks-green transition-all appearance-none">
-                  <option>Sí</option>
-                  <option>No</option>
-                  <option>No estoy seguro</option>
-                </select>
-                <p className="text-[10px] text-gray-400 mt-2 italic">Los bancos requieren demostrar liquidez financiera mínima de $5,000.</p>
-              </div>
-
-              <button type="submit" className="w-full bg-navy-blue text-white py-5 rounded-2xl font-bold text-lg hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-xl shadow-navy-blue/20">
-                APLICAR A LA LISTA DE ESPERA 💎
-              </button>
-
-              <p className="text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                🔒 Tu información es 100% confidencial.
-              </p>
-
-              {/* GHL Form Embed Placeholder */}
-              <div id="ghl-form-embed" className="hidden">
-                {/* GoHighLevel form will be embedded here */}
-              </div>
-            </form>
+          <div className="bg-white rounded-[40px] p-4 md:p-6 shadow-2xl overflow-hidden min-h-[600px]">
+            <iframe 
+              src="https://app.diamondbizconsulting.com/widget/survey/ItZZl27uVsymzJ0a60Qb" 
+              style={{ border: 'none', width: '100%', height: '100%', minHeight: '600px' }} 
+              scrolling="no" 
+              id="ItZZl27uVsymzJ0a60Qb" 
+              title="survey"
+            ></iframe>
           </div>
         </div>
       </div>
@@ -653,7 +667,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-16 mb-16 items-center">
           <div className="text-center md:text-left">
-            <div className="font-bold text-2xl mb-6 text-black">💎 DIAMOND FUNDING</div>
+            <Logo className="h-12 mb-6 mx-auto md:mx-0" />
             <p className="text-lg text-gray-500 max-w-md mx-auto md:mx-0 leading-relaxed">
               Ayudamos a empresarios en Estados Unidos a escalar operaciones obteniendo capital al 0% mediante estructuras sólidas bancarias.
             </p>
